@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  {% include "_head.html" %}
+  <title>Video İndir</title>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-tiktok" viewBox="0 0 24 24"><path d="M14 3.5v11.2a3.8 3.8 0 1 1-3.8-3.8M14 3.5c.4 2.6 2.3 4.4 5 4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-youtube" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></symbol>
+    <symbol id="i-open" viewBox="0 0 24 24"><path d="M14 4h6v6m0-6-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 12.5h9l1-12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='icon.svg') }}" alt="" width="30" height="30">
+      <span>Video İndir</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- İNDİR -->
+    <section class="view active" id="view-download" aria-labelledby="h-download">
+      <h1 id="h-download">Video indir</h1>
+      <p class="muted lead">Instagram, TikTok veya YouTube videosunun linkini yapıştırın.</p>
+
+      <form id="dl-form" class="card" novalidate>
+        <label for="url" class="sr-only">Video linki</label>
+        <div class="input-wrap">
+          <input id="url" name="url" type="text" inputmode="url" placeholder="Linki buraya yapıştırın"
+                 autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"
+                 value="{{ initial_url }}">
+          <button type="button" id="paste-btn" class="chip">Yapıştır</button>
+        </div>
+        <button type="submit" id="dl-btn" class="btn btn-primary big">
+          <svg class="ico"><use href="#i-download"/></svg> İndir
+        </button>
+      </form>
+
+      <section id="status" class="card status" hidden aria-live="polite">
+        <div class="status-head">
+          <span class="badge" id="st-platform"></span>
+          <span class="st-state" id="st-state"></span>
+        </div>
+        <p class="st-title" id="st-title"></p>
+        <div class="progress" id="st-progress"><div class="bar" id="st-bar"></div></div>
+        <p class="st-msg" id="st-msg"></p>
+        <details class="st-detail" id="st-detail" hidden>
+          <summary>Teknik ayrıntı</summary>
+          <pre id="st-detail-text"></pre>
+        </details>
+        <div class="st-actions" id="st-done" hidden>
+          <a class="btn btn-success big" id="st-save" href="#" download>
+            <svg class="ico"><use href="#i-download"/></svg> Telefona kaydet
+          </a>
+          <button type="button" class="btn btn-ghost" id="st-new">Yeni video indir</button>
+        </div>
+        <div class="st-actions" id="st-fail" hidden>
+          <button type="button" class="btn btn-ghost" id="st-retry">Tekrar dene</button>
+        </div>
+      </section>
+
+      <div class="help card soft">
+        <h2>Nasıl kullanılır?</h2>
+        <ol>
+          <li>Videonun altındaki <b>Paylaş</b> düğmesine basın.</li>
+          <li><b>Bağlantıyı kopyala</b>’yı seçin.</li>
+          <li>Buraya gelip <b>Yapıştır</b>, sonra <b>İndir</b>’e basın.</li>
+        </ol>
+        <p class="muted small">Video telefonun <b>İndirilenler</b> klasörüne kaydedilir ve Galeri’de görünür. İndirdiğiniz her videonun linki alttaki bölümlerde saklanır.</p>
+      </div>
+    </section>
+
+    {% for key, label in [('instagram', 'Instagram Videoları'), ('tiktok', 'TikTok Videoları'), ('youtube', 'YouTube Videoları')] %}
+    <section class="view" id="view-{{ key }}" aria-labelledby="h-{{ key }}">
+      <h1 id="h-{{ key }}" class="with-icon"><span class="pdot {{ key }}"><svg class="ico"><use href="#i-{{ key }}"/></svg></span>{{ label }}</h1>
+      <ul class="list" id="list-{{ key }}"></ul>
+      <div class="empty" id="empty-{{ key }}">
+        <p>Henüz {{ label.split(' ')[0] }} videosu indirilmedi.</p>
+        <p class="muted small">İndirdiğiniz videoların linkleri burada birikir.</p>
+      </div>
+    </section>
+    {% endfor %}
+  </main>
+
+  <nav class="bottom-nav" aria-label="Bölümler">
+    <button class="nav-btn" data-view="download" aria-current="page">
+      <svg class="ico"><use href="#i-download"/></svg><span>İndir</span>
+    </button>
+    <button class="nav-btn" data-view="instagram">
+      <svg class="ico"><use href="#i-instagram"/></svg><span>Instagram</span><b class="count" id="count-instagram"></b>
+    </button>
+    <button class="nav-btn" data-view="tiktok">
+      <svg class="ico"><use href="#i-tiktok"/></svg><span>TikTok</span><b class="count" id="count-tiktok"></b>
+    </button>
+    <button class="nav-btn" data-view="youtube">
+      <svg class="ico"><use href="#i-youtube"/></svg><span>YouTube</span><b class="count" id="count-youtube"></b>
+    </button>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <template id="item-tpl">
+    <li class="item">
+      <div class="item-top">
+        <a class="thumb" target="_blank" rel="noopener noreferrer"><img alt="" loading="lazy"><span class="dur"></span></a>
+        <div class="meta">
+          <p class="title"></p>
+          <p class="sub"></p>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" class="act primary" data-act="download"><svg class="ico"><use href="#i-download"/></svg>İndir</button>
+        <a class="act" data-act="open" target="_blank" rel="noopener noreferrer"><svg class="ico"><use href="#i-open"/></svg>Aç</a>
+        <button type="button" class="act" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Kopyala</button>
+        <button type="button" class="act icon danger" data-act="delete" aria-label="Listeden sil"><svg class="ico"><use href="#i-trash"/></svg></button>
+      </div>
+    </li>
+  </template>
+
+  <script src="{{ url_for('static', filename='app.js') }}?v=2" defer></script>
+</body>
+</html>

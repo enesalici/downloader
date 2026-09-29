@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  {% include "_head.html" %}
+  <title>Video İndir — Giriş</title>
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <img class="login-logo" src="{{ url_for('static', filename='icon.svg') }}" alt="" width="64" height="64">
+    <h1>Video İndir</h1>
+    <p class="muted">Bir kere giriş yapmanız yeterli, bu telefonda hep açık kalır.</p>
+
+    {% if error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
+
+    <form method="post" class="stack" autocomplete="on">
+      <label class="field">
+        <span>Kullanıcı adı</span>
+        <input name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+      </label>
+      <label class="field">
+        <span>Şifre</span>
+        <input name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn btn-primary big" type="submit">Giriş yap</button>
+    </form>
+  </main>
+</body>
+</html>
